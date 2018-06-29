@@ -1,0 +1,560 @@
+
+openapi: 3.0.0
+info:
+  description: ACS2 SAS Order Details API Information
+  version: '1.0.0'
+  title: ACS2 SAS Order Details API
+  termsOfService: https://www.monsanto.com
+  contact: {}
+servers:
+  - url: https://api-t.monsanto.com/hybris-q-api
+    description: DEV server
+  - url: https://api-t.monsanto.com/hybris-q-api
+    description: QA server
+  - url: https://api-t.monsanto.com/hybris-q-api
+    description: STAGE server
+  - url: https://api-t.monsanto.com/hybris-q-api
+    description: PROD server
+securityDefinitions:
+  oauth:
+    type: oauth2
+    flow: implicit
+    authorizationUrl: https://test.amp.monsanto.com/as/token.oauth2
+    scopes:
+      basic: |
+       basic
+security:
+  - oauth:
+    - basic
+
+
+tags:
+  - name: MonsantoOrdersController
+    description: SAS Order Details
+
+
+paths:
+  /order/sas/details:
+    get:
+      operationId: getSASOrderDetails
+      summary: Returns data for the Order Details TAB
+      tags:
+        - SAS Order Details
+      parameters:
+        - name: sapAccountId
+          in: query
+          description: sapAccountId
+          required: true
+          schema:
+            type: string
+        - name: accountType
+          in: query
+          description: accountType
+          required: true
+          schema:
+            type: string
+            enum: [Distributor, Wholesaler, Retailer]
+        - name: lineOfBusiness
+          in: query
+          description: Line of Business
+          requried: true
+          schema:
+            type: string
+            enum: [BioAg, Acceleron] 
+        - name: crop
+          in: query
+          description: Crop is applicable for BioAg
+          required: false
+          schema:
+            type: string
+        - name: treatmentType
+          in: query
+          description: treatment type is applicable for Acceleron
+          required: false
+          schema:
+            type: string
+        - name: purchaseOrderNumber
+          in: query
+          description: response would be filtered by purchaseOrderNumber
+          required: false
+          schema:
+            type: string
+        - name: location
+          in: query
+          description:  0 - All Locations including Children of sapAccountId, 1 - Only Location corresponding to sapAccountId
+          required: false
+          schema:
+            type: integer
+            enum: [0,1]
+            default: 0
+        - name: limit
+          in: query
+          description: total number of records to be returned by API
+          required: false
+          schema: 
+            type: integer
+            format: int64
+        - name: offset
+          in: query
+          description: paginaton offset
+          required: false
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        '200':
+          description: Returns an order detail list for a Partner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orderdetails'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /order/sas/summary:
+    get:
+      tags:
+        - SAS Order Summary
+      summary: Returns SAS Order Data for Summary Tab
+      operationId: getSASOrderSummary
+      consumes:
+        - application/json
+      produces:
+        - application/json
+
+      parameters:
+        - name: sapAccountId
+          in: query
+          description: sapAccountId of selected account
+          required: true
+          schema:
+            type: string
+        - name: accountType
+          in: query
+          description: accountType of selected account
+          required: true
+          schema:
+            type: string
+            enum: [Distributor, Wholesaler, Retailer]
+        - name: lineOfBusiness
+          in: query
+          description: lineOfBusiness
+          required: true
+          schema:
+            type: string
+            enum: [BioAg, Acceleron]
+        - name: location
+          in: query
+          description: 0 - All Locations including Children of sapAccountId, 1 - Only Location corresponding to sapAccountId
+          required: false
+          schema:
+            type: integer
+            enum: [0,1]
+            default: 0
+
+      responses:
+        '200':
+          description: Returns a order summary list for a Partner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ordersummary'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /order/sas/shippingStatus:
+    get:
+      tags:
+        - SAS Shipping Status Widget
+      summary: Returns SAS Shipping Status Data for Widget
+      operationId: getSASShippingStatus
+      consumes:
+        - application/json
+      produces:
+        - application/json
+
+      parameters:
+        - name: sapAccountId
+          in: query
+          description: sapAccountId of selected account
+          required: true
+          schema:
+            type: string
+        - name: accountType
+          in: query
+          description: accountType of selected account
+          required: true
+          schema:
+            type: string
+            enum: [Distributor, Wholesaler, Retailer]
+        - name: lineOfBusiness
+          in: query
+          description: lineOfBusiness
+          required: true
+          schema:
+            type: string
+            enum: [BioAg, Acceleron]
+        - name: location
+          in: query
+          description: 0 - All Locations including Children of sapAccountId, 1 - Only Location corresponding to sapAccountId
+          required: false
+          schema:
+            type: integer
+            enum: [0,1]
+            default: 0
+
+      responses:
+        '200':
+          description: Returns SAS Shipping Status Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/shippingStatusResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /order/sas/yoyTrends:
+    get:
+      tags:
+        - SAS Year-Over-Trends Widgets
+      summary: Returns SAS Year-Over-Trends Widgets Data
+      operationId: getSASYOYTrends
+      consumes:
+        - application/json
+      produces:
+        - application/json
+
+      parameters:
+        - name: sapAccountId
+          in: query
+          description: sapAccountId of selected account
+          required: true
+          schema:
+            type: string
+        - name: accountType
+          in: query
+          description: accountType of selected account
+          required: true
+          schema:
+            type: string
+            enum: [Distributor, Wholesaler, Retailer]
+        - name: lineOfBusiness
+          in: query
+          description: lineOfBusiness
+          required: true
+          schema:
+            type: string
+            enum: [BioAg, Acceleron]
+        - name: location
+          in: query
+          description: 0 - All Locations including Children of sapAccountId, 1 - Only Location corresponding to sapAccountId
+          required: false
+          schema:
+            type: integer
+            enum: [0,1]
+            default: 0
+
+      responses:
+        '200':
+          description: Returns SAS Year-Over-Trends Widgets Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/yoyTrendsResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    ordersummary:
+      type: object
+      properties:
+        summary:
+          type: array
+          description: contains the list of location
+          items:
+            $ref: '#/components/schemas/summary'
+      description: represents the response object for crop protection order summary end point
+    summary:
+      type: object
+      properties:
+        accountType:
+          type: string
+          description: account type of account
+          enum: [myLocation, allLocations]
+        locations:
+          type: array
+          description: contains the list of statistics of location
+          items:
+            $ref: '#/components/schemas/locations'
+  
+    locations:
+      type: object
+      description: list of unique locations
+      properties:
+        locationName:
+          type: string
+          description: account/dealership name
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/orders'
+  
+    orders:
+      type: object
+      properties:
+        crop:
+          type: string
+          description: crop is applicable for BioAg only
+        treatmentType:
+          type: string
+          description: treatmentType is applicable for Acceleron only
+        orderedQuantity:
+          type: integer
+          format: int64
+          description: orderedQuantity
+        shippedQuantity:
+          type: integer
+          format: int64
+          description: shippedQuantity
+        scheduledToShip:
+          type: integer
+          format: int64
+          description: scheduledToShip quantity
+        remainingToShip:
+          type: integer
+          format: int64
+          description: remainingToShip quantity
+        priorYearShipped:
+          type: integer
+          format: int64
+          description: priorYearShipped quantity
+        cyToPyPercent:
+          type: integer
+          format: int64
+          description: (shippedQuantity/priorYearShipped)*100
+          
+    orderdetails:
+      type: object
+      properties:
+        recordCount:
+          type: integer
+          format: int64
+        orderDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/details'
+      description: response object for SAS order detail end point
+    details:
+      type: object
+      properties:
+        lineOfBusiness:
+          type: string
+          description: BioAg or Acceleron
+        soldToAccountID:
+          type: string
+          description: soldToAccountID
+        soldToName: #soldToAccountName
+          type: string
+          description: soldToRetailer
+        shipToAccountID:
+          type: string
+          description: shipToAccountID
+        shipToName:
+          type: string
+          description: shipToName
+        shipToCity:
+          type: string
+          description: shipToCity
+        shipToState:
+          type: string
+          description: shipToState
+        payerAccountID:
+          type: string
+          description: billToAccountID
+        payerAccountName:
+          type: string
+          description: billToAccountName
+        purchaseOrderNumber:
+          type: string
+          description: purchaseOrderNumber
+        purchaseOrderDate:
+          type: string
+          format: date
+          description: purchaseOrderDate
+        salesOrderNumber:
+          type: string
+          description: salesOrderNumber
+        orderStatus:
+          type: string
+          description: orderStatus
+        requestedDeliveryDate:
+          type: string
+          format: date
+          description: requestedDeliveryDate
+        estimatedDeliveryDate:
+          type: string
+          format: date
+          description: estimatedDeliveryDate
+        details:
+          type: array
+          description: list of details
+          items:
+            $ref: '#/components/schemas/detailsdata'
+    detailsdata:
+      type: object
+      properties:
+        crop:
+          type: string
+          description: crop is applicable for BioAg
+        treatmentType:
+          type: string
+          description: treatmentType is applicable for Acceleron
+        materialNumber:
+          type: string
+          description: materialNumber
+        productDescription:
+          type: string
+          description: productDescription
+        shipStatus:
+          type: string
+          description: shipStatus
+        orderQuantity:
+          type: integer
+          format: int64
+          description: orderQuantity
+        unitOfMeasure:
+          type: string
+          description: unitOfMeasure
+        unitsTreated: 
+          type: integer
+          format: int64
+          description: unitsTreated
+        shippedQuantity:
+          type: integer
+          format: int64
+          description: shippedQuantity
+        scheduledToShip:
+          type: integer
+          format: int64
+          description: scheduledToShip quantity
+        remainingToShip:
+          type: integer
+          format: int64
+          description: remianingToShip quantity
+    
+    shippingStatusResponse:
+      type: object
+      properties:
+        myLocation:
+          $ref: '#/components/schemas/shippingStatusList'
+        allLocations:
+          $ref: '#/components/schemas/shippingStatusList'
+          
+    shippingStatusList:
+      type: object
+      properties:
+        shippingStatuses:
+          type: array
+          description: list of shipping statuses for total and each crop
+          items:
+            $ref: '#/components/schemas/shippingStatus'
+            
+    shippingStatus:
+      type: object
+      properties:
+        categoryName:
+          type: string
+          description: either "total" or a valid crop name for BioAg or a valid treatment type for Acceleron
+        totalQuantity:
+          type: integer
+          format: int64
+          description: totalQuantity
+        shippedQuantity:
+          type: integer
+          format: int64
+          description: shippedQuantity
+        scheduledQuantity:
+          type: integer
+          format: int64
+          description: scheduledQuantity
+        toShipQuantity:
+          type: integer
+          format: int64
+          description: toShipQuantity
+        shippedPercent:
+          type: integer
+          format: int32
+          description: (shippedQuantity/totalQuantity)*100
+        scheduledPercent:
+          type: integer
+          format: int32
+          description: (scheduledQuantity/totalQuantity)*100
+          
+    yoyTrendsResponse:
+      type: object
+      properties:
+        myLocation:
+          $ref: '#/components/schemas/yoyTrendsList'
+        allLocations:
+          $ref: '#/components/schemas/yoyTrendsList'
+          
+    yoyTrendsList:
+      type: object
+      properties:
+        yoyTrends:
+          type: array
+          description: list of shipping statuses for total and each crop
+          items:
+            $ref: '#/components/schemas/yoyTrend'
+            
+    yoyTrend:
+      type: object
+      properties:
+        categoryName:
+          type: string
+          description: either "total" or a valid crop name for BioAg or a valid treatment type for Acceleron
+        cyTotalOrderQuantity:
+          type: integer
+          format: int64
+          description: current year totalQuantity
+        pyTotalOrderQuantity:
+          type: integer
+          format: int64
+          description: previous year totalQuantity
+        cyShippedQuantity:
+          type: integer
+          format: int64
+          description: current year shippedQuantity
+        pyShippedQuantity:
+          type: integer
+          format: int64
+          description: previous year shippedQuantity
+
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string    

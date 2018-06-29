@@ -1,0 +1,563 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "provides seed applied solutions (BioAg and Acceleron) orders information",
+    "version": "1.0",
+    "title": "ACS2 Seed Applied Solutions Orders API",
+    "termsOfService": "Terms of service",
+    "contact": {}
+  },
+  "host": "127.0.0.1:8080",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "sas-insights-controller-impl",
+      "description": "gets information regarding SAS orders for an account, or a summary of all accounts in the hierarchy"
+    }
+  ],
+  "paths": {
+    "/sasOrderDetail": {
+      "get": {
+        "tags": [
+          "sas-insights-controller-impl"
+        ],
+        "summary": "SAS orders detail of materials ordered by order number",
+        "operationId": "getSASOrderDetailUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "query",
+            "description": "The SAP account Id for the request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "accountType",
+            "in": "query",
+            "description": "If requesting my location only, account type is supplied",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "myLocation",
+            "in": "query",
+            "description": "default value is \"0\", meaning all locations in my hierarchy.  If \"1\" then my location only",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "lineOfBusiness",
+            "in": "query",
+            "description": "either BioAg or Acceleron are supported here",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "treatmentType",
+            "in": "query",
+            "description": "treatment type of the material filter",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "crop",
+            "in": "query",
+            "description": "crop filter",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "purchaseOrderNumber",
+            "in": "query",
+            "description": "purchase order filter",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "limit",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "offset",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "debug",
+            "in": "query",
+            "description": "debug",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "cache",
+            "in": "query",
+            "description": "cache",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns an order detail list for a Partner",
+            "schema": {
+              "$ref": "#/definitions/SASOrderDetailResponseList"
+            }
+          },
+          "400": {
+            "description": "Request Params/ EndPoint is not proper",
+            "schema": {
+              "$ref": "#/definitions/SASOrderDetailResponseList"
+            }
+          },
+          "401": {
+            "description": "Unauthorized Token/Access",
+            "schema": {
+              "$ref": "#/definitions/SASOrderDetailResponseList"
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Resource Not found",
+            "schema": {
+              "$ref": "#/definitions/SASOrderDetailResponseList"
+            }
+          },
+          "500": {
+            "description": "Internal server problems",
+            "schema": {
+              "$ref": "#/definitions/SASOrderDetailResponseList"
+            }
+          }
+        }
+      }
+    },
+    "/sasOrderSummary": {
+      "get": {
+        "tags": [
+          "sas-insights-controller-impl"
+        ],
+        "summary": "gets SAS order summary data by child account ID and material",
+        "operationId": "getSASOrderSummaryUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "query",
+            "description": "The SAP account Id for the request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "accountType",
+            "in": "query",
+            "description": "If requesting my location only, account type is supplied",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "myLocation",
+            "in": "query",
+            "description": "default value is \"0\", meaning all locations in my hierarchy.  If \"1\" then my location only",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "lineOfBusiness",
+            "in": "query",
+            "description": "either BioAg or Acceleron are supported here",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "debug",
+            "in": "query",
+            "description": "debug",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "cache",
+            "in": "query",
+            "description": "cache",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a order summary list for a Partner",
+            "schema": {
+              "$ref": "#/definitions/SASOrderSummaryResponseList"
+            }
+          },
+          "400": {
+            "description": "Request Params/ EndPoint is not proper",
+            "schema": {
+              "$ref": "#/definitions/SASOrderSummaryResponseList"
+            }
+          },
+          "401": {
+            "description": "Unauthorized Token/Access",
+            "schema": {
+              "$ref": "#/definitions/SASOrderSummaryResponseList"
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Resource Not found",
+            "schema": {
+              "$ref": "#/definitions/SASOrderSummaryResponseList"
+            }
+          },
+          "500": {
+            "description": "Internal server problems",
+            "schema": {
+              "$ref": "#/definitions/SASOrderSummaryResponseList"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "SASOrderSummaryResponseList": {
+      "type": "object",
+      "properties": {
+        "apiErrors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ApiError"
+          }
+        },
+        "apiMessages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ApiMessage"
+          }
+        },
+        "apiResponseTimes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        },
+        "sasOrderSummaryResponseEntityList": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SASOrderSummaryResponseEntity"
+          }
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "description": "represents the response object for SAS order summary end point"
+    },
+    "SASOrderSummaryResponseEntity": {
+      "type": "object",
+      "properties": {
+        "lineOfBusiness": {
+          "type": "string"
+        },
+        "accountID": {
+          "type": "string"
+        },
+        "sublevelAccountID": {
+          "type": "string"
+        },
+        "sublevelAccountType": {
+          "type": "string"
+        },
+        "sublevelAccountName": {
+          "type": "string"
+        },
+        "sasOrderDetailResponseLineItemList": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SASOrderSummaryResponseLineItem"
+          }
+        }
+      }
+    },
+    "SASOrderSummaryResponseLineItem": {
+      "type": "object",
+      "properties": {
+        "materialNumber": {
+          "type": "string"
+        },
+        "productDescription": {
+          "type": "string"
+        },
+        "baseUnitOfMeasure": {
+          "type": "string"
+        },
+        "salesUnitOfMeasure": {
+          "type": "string"
+        },
+        "treatmentType": {
+          "type": "string"
+        },
+        "crop": {
+          "type": "string"
+        },
+        "unitsTreated": {
+          "type": "string"
+        },
+        "confirmedQuantity": {
+          "type": "string"
+        },
+        "orderedQuantity": {
+          "type": "string"
+        },
+        "shippedQuantity": {
+          "type": "string"
+        },
+        "scheduledToShipQuantity": {
+          "type": "string"
+        },
+        "remainingToShipQuantity": {
+          "type": "string"
+        },
+        "priorYearOrderQuantity": {
+          "type": "string"
+        },
+        "priorYearShippedQuantity": {
+          "type": "string"
+        }
+      }
+    },
+    "SASOrderDetailResponseList": {
+      "type": "object",
+      "properties": {
+        "apiErrors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ApiError"
+          }
+        },
+        "apiMessages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ApiMessage"
+          }
+        },
+        "apiResponseTimes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        },
+        "sasOrderDetailResponseEntityList": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SASOrderDetailResponseEntity"
+          }
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "description": "represents the response object for SAS order detail end point"
+    },
+    "SASOrderDetailResponseEntity": {
+      "type": "object",
+      "properties": {
+        "lineOfBusiness": {
+          "type": "string"
+        },
+        "soldToSAPID": {
+          "type": "string"
+        },
+        "soldToAccountType": {
+          "type": "string"
+        },
+        "soldToName": {
+          "type": "string"
+        },
+        "shipToSAPID": {
+          "type": "string"
+        },
+        "shipToName": {
+          "type": "string"
+        },
+        "shipToCity": {
+          "type": "string"
+        },
+        "billToSAPID": {
+          "type": "string"
+        },
+        "billToName": {
+          "type": "string"
+        },
+        "purchaseOrderNumber": {
+          "type": "string"
+        },
+        "purchaseOrderDate": {
+          "type": "string"
+        },
+        "salesOrderNumber": {
+          "type": "string"
+        },
+        "sasOrderDetailResponseLineItemList": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SASOrderDetailResponseLineItem"
+          }
+        }
+      }
+    },
+    "SASOrderDetailResponseLineItem": {
+      "type": "object",
+      "properties": {
+        "materialNumber": {
+          "type": "string"
+        },
+        "productDescription": {
+          "type": "string"
+        },
+        "orderedQuantity": {
+          "type": "string"
+        },
+        "baseUnitOfMeasure": {
+          "type": "string"
+        },
+        "salesUnitOfMeasure": {
+          "type": "string"
+        },
+        "treatmentType": {
+          "type": "string"
+        },
+        "crop": {
+          "type": "string"
+        },
+        "unitsTreated": {
+          "type": "string"
+        },
+        "shipStatus": {
+          "type": "string"
+        }
+      }
+    },
+    "ApiMessage": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "messageType": {
+          "type": "string"
+        }
+      }
+    },
+    "ApiError": {
+      "type": "object",
+      "properties": {
+        "errorCode": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "errorMessage": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "100",
+            "101",
+            "102",
+            "103",
+            "200",
+            "201",
+            "202",
+            "203",
+            "204",
+            "205",
+            "206",
+            "207",
+            "208",
+            "226",
+            "300",
+            "301",
+            "302",
+            "303",
+            "304",
+            "305",
+            "307",
+            "308",
+            "400",
+            "401",
+            "402",
+            "403",
+            "404",
+            "405",
+            "406",
+            "407",
+            "408",
+            "409",
+            "410",
+            "411",
+            "412",
+            "413",
+            "414",
+            "415",
+            "416",
+            "417",
+            "418",
+            "419",
+            "420",
+            "421",
+            "422",
+            "423",
+            "424",
+            "426",
+            "428",
+            "429",
+            "431",
+            "451",
+            "500",
+            "501",
+            "502",
+            "503",
+            "504",
+            "505",
+            "506",
+            "507",
+            "508",
+            "509",
+            "510",
+            "511"
+          ]
+        }
+      }
+    }
+  }
+}

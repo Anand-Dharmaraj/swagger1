@@ -1,0 +1,37 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: My API Spec
+  description: My API Description
+servers:
+  - url: https://api01-np.agro.services/hybris-q-api
+    description: DEV server
+  - url: https://api01-np.agro.services/hybris-q-api
+    description: QA server
+  - url: https://api01-np.agro.services/hybris-q-api
+    description: STAGE server
+  - url: https://api01-np.agro.services/hybris-q-api
+    description: PROD server
+    
+security:
+  - OAuth2:
+    - read
+
+  
+paths:
+  /resourceUrl:
+    get:
+      responses:
+        200:
+          description: Success
+          
+components:
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationURL: https://test.amp.monsanto.com/as/token.oauth2
+          scopes:
+            read:
+            write: 

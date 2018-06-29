@@ -1,0 +1,447 @@
+
+################################################################################
+#           ACS2 Crop Protection Order API Information                         #
+################################################################################
+openapi: 3.0.1
+info:
+  description: ACS2 Crop Protection Order API Information
+  version: '1.0'
+  title: ACS2 Crop Protection Orders API
+  termsOfService:
+  contact: {}
+host: 'api-t.monsanto.com'
+basePath: /hybris-q-api
+schemes:
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+
+################################################################################
+#                                  Security                                    #
+################################################################################
+securityDefinitions:
+  oauth:
+    type: oauth2
+    flow: implicit
+    authorizationUrl: https://test.amp.monsanto.com/as/token.oauth2
+    scopes:
+      basic: |
+       to read any and all data related to twitter
+security:
+  - oauth:
+    - basic
+
+
+tags:
+  - name: MonsantoOrdersController
+    description: gets the information regarding crop protection orders
+
+
+################################################################################
+#                                           Paths                              #
+################################################################################
+paths:
+
+  ##########################################################################
+  #                               CP Order Detail                         #
+  ##########################################################################
+  /order/CP/orders:
+    get:
+      tags:
+        - Crop Protection Order  - Product Detail Tab
+      summary: This API is used to fulfill crop protection order detail data needs
+      description: AM-3588, CP Order Details
+      operationId: getCPDetails
+      consumes:
+        - application/json
+      produces:
+        - application/json
+
+      ##########################################################################
+      #                 CP Order Detail - Parameters                           #
+      ##########################################################################
+      parameters:
+        - name: sapAccountId
+          in: query
+          description: sapAccountId
+          required: true
+          schema:
+            type: string
+        - name: accountType
+          in: query
+          description: accountType
+          required: true
+          schema:
+            type: string
+            enum: [Distributor, Wholesaler, Retailer]
+        - name: productTier
+          in: query
+          description: productTier
+          required: false
+          type: string
+        - name: purchaseOrderNumber
+          in: query
+          description: purchaseOrderNumber
+          required: false
+          type: string
+        - name: location
+          in: query
+          description: location
+          required: false
+          type: string
+          enum: [ALL, ""] # "" default
+        - name: limit
+          in: query
+          description: total number of records to be returned by API
+          required: false
+          type: integer
+          format: int64
+        - name: offset
+          in: query
+          description: paginaton offset
+          required: false
+          type: integer
+          format: int64
+
+      ##########################################################################
+      #                         CP Order Detail - Response                     #
+      ##########################################################################
+      responses:
+        '200':
+          description: Returns an order detail list for a Partner
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/CPOrderDetailResponseList'
+        '400':
+            description: Request Params/ EndPoint is not proper
+            content:
+              application/json:
+                schema:
+                    $ref: '#/definitions/BadRequestError'
+        '401':
+            description: Unauthorized Token/Access
+            content:
+              application/json:
+                  schema:
+                    $ref: '#/definitions/UnauthorizedAccessError'
+        '403':
+            description: Forbidden
+            content:
+              application/json:
+        '404':
+            description: Resource Not found
+            content:
+              application/json:
+                schema:
+                    $ref: '#/definitions/ResourceNotFoundError'
+        '500':
+            description: Internal server problems
+            content:
+              application/json:
+                  schema:
+                    $ref: '#/definitions/InternalServerError'
+
+  ##########################################################################
+  #                             CP Order Summary                           #
+  ##########################################################################
+  /order/CP/ordersummary:
+    get:
+      tags:
+        - Crop Protection Order  - Summary Tab
+      summary: This API is used to fulfill crop protection order summary data needs
+      operationId: getCpOrderSummary
+      consumes:
+        - application/json
+      produces:
+        - application/json
+
+      ##########################################################################
+      #                         CP Order Summary- Parameters                   #
+      ##########################################################################
+      parameters:
+        - name: sapAccountId
+          in: query
+          description: sapAccountId of selected account
+          required: true
+          type: string
+        - name: accountType
+          in: query
+          description: accountType of selected account
+          required: false
+          type: string
+          format: string
+          enum: [Distributor, Wholesaler, Retailer]
+        - name: location
+          in: query
+          description: location selected location
+          required: false
+          type: string
+          enum: [ALL, ""] # "" default
+        - name: productTier
+          in: query
+          description: productTier
+          required: false
+          type: string
+
+      ##########################################################################
+      #                         CP Order Summary- Response                     #
+      ##########################################################################
+      responses:
+        '200':
+          description: Returns a order summary list for a Partner
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/CPOrderSummaryResponseList'
+        '400':
+          description: Request Params/ EndPoint is not proper
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/BadRequestError'
+        '401':
+          description: Unauthorized Token/Access
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/UnauthorizedAccessError'
+        '403':
+          description: Forbidden
+        '404':
+          description: Resource Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/ResourceNotFoundError'
+        '500':
+          description: Internal server problems
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/InternalServerError'
+
+definitions:
+  ##########################################################################
+  #                         CP Order Summary- Definitions                  #
+  ##########################################################################
+  CPOrderSummaryResponseList:
+    type: object
+    properties:
+      summary:
+        type: array
+        description: contains the list of location
+        items:
+          $ref: '#/definitions/summary'
+    description: represents the response object for crop protection order summary end point
+  summary:
+    type: object
+    properties:
+      accountType:
+        type: string
+        description: account type of account
+      locations:
+        type: array
+        description: contains the list of statistics of location
+        items:
+          $ref: '#/definitions/locations'
+
+  locations:
+    type: object
+    description: list of unique locations
+    properties:
+      location:
+        type: string
+        description: account/dealership name
+      orders:
+        type: array
+        items:
+          $ref: '#/definitions/orders'
+
+  orders:
+    type: object
+    properties:
+      deliveredOrder:
+        type: integer
+        format: int64
+        description: delivered order of corresponding Product Tier
+      deliveredPrec:
+        type: integer
+        format: int64
+        description: delivered percentage of corresponding Product Tier
+      openOrder:
+        type: integer
+        format: int64
+        description: open order of corresponding Product Tier
+      productTier:
+        type: string
+        description: product Tier Name
+      totalOrder:
+        type: integer
+        format: int64
+        description: total order of corresponding Product Tier
+
+
+  ##########################################################################
+  #                         CP Order Details- Definitions                  #
+  ##########################################################################
+  CPOrderDetailResponseList:
+    type: object
+    properties:
+      monsantoCPOrderDetails:
+        type: array
+        items:
+          $ref: '#/definitions/monsantoCPOrderDetails'
+      recordCount:
+        type: integer
+        format: int64
+    description: represents the response object for crop protection order detail end point
+  monsantoCPOrderDetails:
+    type: object
+    properties:
+      soldToAccountID:
+        type: string
+        description: soldToAccountID
+      soldToAccountType:
+        type: string
+        description: soldToAccountType
+      soldToRetailer: #soldToAccountName
+        type: string
+        description: soldToRetailer
+      soldToRetailerCity:
+        type: string
+        description: soldToRetailerCity
+      soldToAccountState:
+        type: string
+        description: soldToAccountState
+      shipToAccountID:
+        type: string
+        description: shipToAccountID
+      shipToName:
+        type: string
+        description: shipToName
+      shipToCity:
+        type: string
+        description: shipToCity
+      shipToState:
+        type: string
+        description: shipToState
+      billToAccountID:
+        type: string
+        description: billToAccountID
+      billToAccountName:
+        type: string
+        description: billToAccountName
+      billToAccountCity:
+        type: string
+        description: billToAccountCity
+      billToAccountState:
+        type: string
+        description: billToAccountState
+      monsantoCPOrderDetailsList:
+        type: array
+        description: list of monsantoCPOrderDetailsList
+        items:
+          $ref: '#/definitions/monsantoCPOrderDetailsList'
+      recordCount:
+        type: string
+
+  monsantoCPOrderDetailsList:
+    type: object
+    properties:
+      purchaseOrderNumber:
+        type: string
+        description: purchaseOrderNumber
+      purchaseOrderDate:
+        type: string
+        description: purchaseOrderDate
+      orderNumber:
+        type: string
+        description: orderNumber
+      materialNumber:  #orderItemNumber:
+        type: string
+        description: materialNumber
+      fillPeriod:
+        type: string
+        description: fillPeriod
+      orderStatus: #shipmentStatus:
+        type: string
+        description: orderStatus
+      productName: #productname
+        type: string
+        description: productName
+      productTier:
+        type: string
+        description: productTier
+      brand:
+        type: string
+        description: brand
+      productType:
+        type: string
+        description: productType
+      itemGallonTotal: #reconciledQuantity:
+        type: string
+        description: itemGallonTotal
+      orderQuantity:
+        type: string
+        description: orderQuantity
+      unitOfMeasure: #orderQuantityUOM:
+        type: string
+        description: unitOfMeasure
+      salesAreaDescription:
+        type: string
+        description: salesAreaDescription
+      requestedDeliveryDate:
+        type: string
+        description: requestedDeliveryDate
+      estimatedDeliveryDate: #deliveryDate:
+        type: string
+        description: estimatedDeliveryDate
+      cancellationReason: #rejectionReason:
+        type: string
+        description: rejectionReason
+      refusal: #refusalDescription:
+        type: string
+        description: refusalDescription
+      refusalCode:
+        type: string
+        description: refusalCode
+
+  ##########################################################################
+  #                                   Errors                               #
+  ##########################################################################
+  BadRequestError:
+    type: array
+    items:
+      $ref: '#/definitions/Error'
+  UnauthorizedAccessError:
+    type: array
+    description: used for Unauthorized Resource Access
+    items:
+      $ref: '#/definitions/Error'
+  ResourceNotFoundError:
+    type: array
+    description: used for Resource Not Found
+    items:
+      $ref: '#/definitions/Error'
+  InternalServerError:
+    type: array
+    description: used for Internal Server Error
+    items:
+      $ref: '#/definitions/Error'
+
+  Error:
+    type: object
+    description:  a common object used for server side errors
+    properties:
+      message:
+        type: string
+        description: print reason error
+      type:
+        type: string
+        description: print error type
+  
